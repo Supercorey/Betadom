@@ -1,0 +1,165 @@
+Welcome to Betadom Remote Terminal v0.1.4
+(c)1989 Matyas Enterprises. All Rights Reserved.
+
+<Break>
+
+Initiating Terminal Self Check...
+
+UNIT					STATUS
+Main A/C Bus 3..........................Good
+Wireless Protocol Unit (WPU)............Good
+I/O Grid 21-042-A.......................Good
+Disk Tray A4............................Empty
+Reserve D/C Supply......................Check Alternator
+Biometric Continuity Scanner............OK
+ConVAR Radion Backlight.................Needs Replacement
+64x Celeron Enhancements................Good
+Control Surface Alpha-9.................Good
+Hard-wired Server UPlink................Online
+
+RESULTS:
+
+PASSED: 7/10 FAILED 3/10
+
+LAST SCAN: 01/24/89
+
+OVERALL: BETADOM TERMINAL OMEGA-B9: OPERATIONAL <If possible, flash operational>
+
+<Break>
+
+Checking Security Status of all Active Ports...
+
+PORT					STATUS
+1077-A..................................Secure
+12700-1.................................Offline
+27015...................................Secure
+65509...................................VULNERABLE
+255-0-1A................................Secure (Check Power)
+4815-16.................................Offline
+2342-42.................................OUT OF DATE
+77-E....................................PING TIMEOUT
+014-MCP.................................RUNTIME ERROR
+
+RESULTS:
+
+PASSED: 3/9 FAILED: 6/9
+
+LAST SCAN: N/A
+
+OVERALL: BETADOM ACCESS GRID A-69-J: NON-OPERATIONAL <Once again, flash if possible>
+
+<Break>
+
+MESSAGE RECEIVED
+
+TRANSMITTING...
+
+URGENT WARNING: SELF-TEST 097-P FAILED. PLEASE CONTACT BETADOM TECHNICAL STAFF
+AT (192)-168-2542 TO RESOLVE THIS ISSUE.
+
+ERROR: Lost connection to server at 255.0.172.145. Please consult reference
+manual AG-99, QF:PCLL if the problem persists.
+
+<Break>
+
+RCON: INCOMING COMMAND FROM LOCATION: 192.168.254.200:
+>:xcopy c:\BetaDOM\Mantienence\bin\Reconnect_ports.exe LAN:\TERMINALS\OMEGA\B9\RUNONSTART
+
+COPYING FILE FROM TERMINAL ON LAN...
+COMPLETED: <If possible, show percentages up to 100>
+
+FILE TRANSFERED.
+INITIATING REBOOT...
+
+<Break>
+
+Re-initializing Security Check 097-P...
+
+PORT					STATUS
+1077-A..................................Secure
+12700-1.................................Secure
+27015...................................Secure
+65509...................................Secure
+255-0-1A................................Secure
+4815-16.................................Secure
+2342-42.................................Secure
+77-E....................................Secure
+014-MCP.................................Secure
+
+RESULTS:
+
+PASSED: 9/9 FAILED: 0/9
+
+LAST SCAN: TODAY
+
+OVERALL: BETADOM ACCESS GRID A-69-J: OPERATIONAL <Once again, flash if possible>
+
+<Break>
+
+Requesting Clearance for Client at localhost...
+
+AUTH KEY: CH10-255A-481J-516Y-QPAL-ZM42-77AP
+
+KEY ACCEPTED BY MAINFRAME
+
+TRANSFERRING FILE PACKETS...
+
+Encryption Pass...............<Percentages>
+Keymappings...................<Percentages>
+BetaDOM Console...............<Percentages>
+I/O Grid......................<Percentages>
+AimBOT Overlay................<Percentages>
+b_hdsht.wav...................<Percentages>
+trenchcoat.swf................<Percentages>
+chaper.mpg....................<Percentages>
+Localization Files............<Percentages>
+MainMenu.txt..................<Percentages>
+MetaJokes.js..................<Percentages>
+
+Percent Done: <Percentages>
+<If possible, loading bar>
+
+ALL FILES DOWNLOADED.
+TERMINAL STATUS: ONLINE <Flash>
+
+<Break>
+//If you like, you can just set the other tables to loop here, and use this bit for connecting to a server. If not, just include this in the rotation.
+
+Initialising Final Pre-Connection Checks...
+
+SYSTEMS					STATUS
+EEPROM..................................GO
+RETRO...................................GO
+TELNET..................................GO
+GUIDANCE................................GO
+CASSETTE................................GO
+EECOM...................................GO
+GNC.....................................GO
+TELMU...................................GO
+DMC.....................................GO
+CONTROL.................................GO
+CLCDR...................................GO
+INCO....................................GO
+FAO.....................................GO
+NETWORK.................................GO
+RECOVERY................................GO
+CAPCOM..................................GO
+QAM1....................................GO
+QUINDAR.................................GO
+AFLC....................................GO
+LWO.....................................GO
+PTO.....................................GO
+FBI.....................................GO
+FSC.....................................GO
+
+ALL SYSTEMS GO.
+
+<If using for starting a game>
+STARTING GAME IN 3...
+2...
+1...
+
+<If not>
+ALL TASKS COMPLETED.
+AWAITING ORDERS FROM TERMINAL...
+<Break>

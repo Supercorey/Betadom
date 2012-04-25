@@ -1,0 +1,13 @@
+=====Credits====
+Lead Developer: Corey Matyas (aka Supercorey)
+
+Beta Testers:
+ - Ethan David
+
+Special Thanks to:
+Ethan David for design suggestions, the text on the menu,
+            menu buttons, other various sprites,
+            and overall support of this project.
+
+
+Copyright 2012 Corey Matyas
