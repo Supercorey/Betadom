@@ -26,7 +26,8 @@ public class ClientHandler extends Thread{
             //BetadomLogger.log("Unable to open socket with "+clientSocket.getInetAddress());
             disconnect("Socket Could Not Be Opened", false);
         }
-        client = new Player(new Point(2000,2000), 0, ResourceManager.getInstance().getImage("SHIP"), 5, 5, 3, ResourceManager.getInstance().getImage("BULLET"));
+        client = new Player(new Point(2000,2000), 0, ResourceManager.getInstance().getImage("SHIP"),
+                5, 5, 3, ResourceManager.getInstance().getImage("BULLET"), "Player");
         uid = ServerEntityManager.addEntity(client);
     }
     
@@ -111,7 +112,7 @@ public class ClientHandler extends Thread{
                     }
                     break;
                 case 0x01:
-                    username = (String)input.readObject();
+                    client.setUsername((String)input.readObject());
                     String password = (String)input.readObject();
                     addPacket(PacketBuilder.loginReply(pingInterval));
                     ServerMain.sendToAll(PacketBuilder.addEntity(uid, client));
@@ -125,7 +126,7 @@ public class ClientHandler extends Thread{
                 case 0x06:
                     String chat = (String)input.readObject();
                     input.readObject();
-                    ChatProcessor.getInstance().processChat("<"+username+"> "+chat);
+                    ChatProcessor.getInstance().processChat("<"+client.getUsername()+"> "+chat);
                     break;
                 case (byte)0xFF:
                     String reason = (String)input.readObject();
@@ -138,7 +139,6 @@ public class ClientHandler extends Thread{
          }
     }
     
-    private String username = "";
     private Player client = null;
     private int uid = 0;
     

@@ -1,11 +1,14 @@
 package com.matyas.game.Betadom;
 
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.geom.AffineTransform;
 import java.io.Serializable;
 import javax.swing.ImageIcon;
 
-public class Entity implements Serializable{
+public class Entity implements Serializable, BetadomDrawable{
     protected int x = 0;
     protected int y = 0;
     protected int direction = 0;
@@ -81,4 +84,14 @@ public class Entity implements Serializable{
     }
     
     public void update(){}
+
+    public void draw(Graphics gfx, Point offset) {
+        Graphics2D g = (Graphics2D)gfx;
+        AffineTransform trans = new AffineTransform();
+
+        trans.setToTranslation(getLocation().x - offset.x - getDistanceOffset(),
+                getLocation().y - offset.y - getDistanceOffset());
+        trans.rotate(Math.toRadians(getDirection()),getSprite().getWidth(null)/2,getSprite().getHeight(null)/2);
+        g.drawImage(getSprite(), trans, null);
+    }
 }

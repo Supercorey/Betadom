@@ -152,11 +152,6 @@ public class GameCanvas extends Canvas implements Runnable{
                         switch(menuSelection){
                             case 0:
                                 gameState = GameState.SERVER_SELECT;
-                                //START TESTING CODE
-                                //TODO: Move player entity creation serverside
-                                //playerId = EntityManager.addEntity(
-                                //        new Player(new Point(2000,2000), 0, ResourceManager.getInstance().getImage("SHIP"), 5, 5, 3, ResourceManager.getInstance().getImage("BULLET"), true));
-                                //END TESTING CODE
                                 break;
                             case 1:
                                 gameState = GameState.OPTIONS;
@@ -241,9 +236,7 @@ public class GameCanvas extends Canvas implements Runnable{
                         
                         playerUpdateLast = System.currentTimeMillis();
                     }
-                    //TODO: REDUNDANT - MARK REMOVAL V
                     EntityManager.updateEntities();
-                    //END BLOCK
                     break;
                 default:
                     break;
