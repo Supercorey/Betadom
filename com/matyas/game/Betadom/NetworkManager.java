@@ -2,6 +2,7 @@ package com.matyas.game.Betadom;
 
 import com.matyas.game.Betadom.util.Packet;
 import com.matyas.game.Betadom.util.PacketBuilder;
+import java.awt.Point;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
@@ -14,8 +15,9 @@ public class NetworkManager extends Thread{
     private ObjectOutputStream output = null;
     private boolean running = true;
     private LinkedList<Packet> outputQueue = new LinkedList<Packet>();
+    private GameCanvas game = null;
     
-    public NetworkManager(InetAddress address, int port){
+    public NetworkManager(InetAddress address, int port, GameCanvas game){
         try{
             socket = new Socket(address, port);
             input = new ObjectInputStream(socket.getInputStream());
@@ -24,6 +26,7 @@ public class NetworkManager extends Thread{
             System.out.println("Unable to create client socket to server.");
             System.exit(-1);
         }
+        this.game = game;
         start();
     }
     
@@ -85,10 +88,36 @@ public class NetworkManager extends Thread{
                     int token = (Integer)input.readObject();
                     addPacket(PacketBuilder.ping(token));
                     break;
+                case 0x02:
+                    serverPingInterval = (Integer)input.readObject();
+                    break;
+                case 0x05:
+                    int uid1 = (Integer)input.readObject();
+                    int x = (Integer)input.readObject();
+                    int y = (Integer)input.readObject();
+                    int rotation = (Integer)input.readObject(); 
+                    Entity entity1 = EntityManager.getEntityById(uid1);
+                    entity1.setLocation(new Point(x,y));
+                    entity1.setDirection(rotation);
+                    break;
                 case 0x06:
                     String text = (String)input.readObject();
                     input.readObject();
                     ChatManager.addChatLine(text);
+                    break;
+                case 0x07:
+                    int uid = (Integer)input.readObject();
+                    Entity entity = (Entity)input.readObject();
+                    EntityManager.addEntity(entity, uid);
+                    if(playerId == -1){
+                        playerId = uid;
+                        game.playerId = uid;
+                        game.gameState = GameState.GAME;
+                    }
+                    break;
+                case (byte)0xFF:
+                    String reason = (String)input.readObject();
+                    disconnect();
                     break;
             }
         }catch(Exception ex){
@@ -96,5 +125,9 @@ public class NetworkManager extends Thread{
             System.out.println("Could not process packet.");
         }
     }
+    
+    //TODO: Finish client ping timeout code
+    private int serverPingInterval = 10000;
+    private int playerId = -1;
     
 }

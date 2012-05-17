@@ -1,5 +1,6 @@
 package com.matyas.game.BetadomServer;
 
+import com.matyas.game.Betadom.ResourceManager;
 import com.matyas.game.Betadom.util.Packet;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -19,6 +20,7 @@ public class ServerMain extends Thread{
         gameThread = new GameThread(this, mapTiles);
         gameThread.start();
         consoleListener = new ConsoleCommandListener();
+        ResourceManager.getInstance().loadFromIndex();
         try {
             serverSocket = new ServerSocket(serverPort);
             BetadomLogger.log("Server started on port: "+serverPort);

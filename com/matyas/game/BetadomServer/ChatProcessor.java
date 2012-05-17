@@ -15,6 +15,7 @@ public class ChatProcessor {
     }
     
     public void processChat(String chat){
+        BetadomLogger.log(chat);
         if(chat.startsWith("/")){
             String command = chat.split(" ")[0].substring(1);
             if(command.equals("stop")){

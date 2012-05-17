@@ -16,14 +16,16 @@ public class Map {
     
     public Map(byte[][] tiles){
         this.tiles = tiles;
-        
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        xTiles = (short) Math.ceil(screenSize.width  / TILE_SIZE+2);
-        yTiles = (short) Math.ceil(screenSize.height / TILE_SIZE+2);
     }
     
     public Map(){
         this(new byte[MAP_SIZE][MAP_SIZE]);
+    }
+    
+    public void initializeGraphics(){
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        xTiles = (short) Math.ceil(screenSize.width  / TILE_SIZE+2);
+        yTiles = (short) Math.ceil(screenSize.height / TILE_SIZE+2);
     }
     
     public void setTiles(byte[][] tiles){

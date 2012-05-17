@@ -1,48 +1,54 @@
 package com.matyas.game.Betadom;
 
+import com.matyas.game.Betadom.util.PacketBuilder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.image.BufferStrategy;
-import java.net.InetAddress;
 import javax.swing.Timer;
 
 public class GameCanvas extends Canvas implements Runnable{
+    //TODO: Modularize code
     private Dimension size = null;
     private Timer timer = null;
     private final Color BG_COLOR = Color.BLACK;
     private final Color FONT_COLOR = Color.WHITE;
     private final Font MAIN_FONT = new Font("Monospaced", Font.PLAIN, 14);
+    protected final int SERVER_PORT = 21220;
     private boolean computationDone = false;
     private boolean doStop = false;
     
-    private GameState gameState = GameState.MAIN_MENU;
+    protected GameState gameState = GameState.MAIN_MENU;
     public static NetworkManager network = null;
-    private int menuSelection = 0;
-    private boolean menuSelected = false;
+    protected int menuSelection = 0;
+    protected boolean menuSelected = false;
     private int menuTextLine = 0;
     private long menuTimeLast = 0;
-    private final String[] menuItems = {"MENU_PLAY","MENU_OPTIONS","MENU_ABOUT","MENU_EXIT"};
-    private final String[] aboutItems = {"MENU_BACK_GAME","MENU_DISCONNECT","MENU_EXIT"};
+    protected final String[] menuItems = {"MENU_PLAY","MENU_OPTIONS","MENU_ABOUT","MENU_EXIT"};
+    protected final String[] aboutItems = {"MENU_BACK_GAME","MENU_DISCONNECT","MENU_EXIT"};
     private String[] aboutText = null;
     private String[] menuText = null;
-    private boolean[] keysDown = new boolean[6]; //Up, Down, Left, Right, Space, T
+    protected boolean[] keysDown = new boolean[6]; //Up, Down, Left, Right, Space, T
     
     private long playerUpdateLast = 0;
-    private String chatTemp = "";
+    private boolean loginSent = false;
+    protected String chatTemp = "";
     private Map map = new Map();
+    protected int playerId = -1;
     
     public GameCanvas(){
         loadData();
+        SettingsManager.initialize();
         
         size = Toolkit.getDefaultToolkit().getScreenSize();
-        addKeyListener(new KeyHandler());
+        addKeyListener(new KeyHandler(this));
         
         setSize(size);
         setIgnoreRepaint(true);
                 
+        map.initializeGraphics();
+        
         timer = new Timer(15, new Chrono(this));
         timer.start();
     }
@@ -93,15 +99,18 @@ public class GameCanvas extends Canvas implements Runnable{
                 //TODO: Options
                 break;
             case SERVER_SELECT:
-                //TODO: Server Select
+                graphics.setColor(FONT_COLOR);
+                graphics.drawChars("Enter Server Address: ".toCharArray(), 0, 20, size.width/2-200, size.height/2-50);
+                graphics.drawChars(chatTemp.toCharArray(), 0, chatTemp.length(),size.width/2-200,size.height/2);
                 break;
             case GAME:
                 map.drawMap(graphics, 
-                        (short)((EntityManager.getInstance().getUser().getLocation().x)-(size.width/2)),
-                        (short)((EntityManager.getInstance().getUser().getLocation().y)-(size.height/2)));
-                EntityManager.getInstance().drawEntities(graphics, map.getLocation());
+                        (short)((EntityManager.getEntityById(playerId).getLocation().x)-(size.width/2)),
+                        (short)((EntityManager.getEntityById(playerId).getLocation().y)-(size.height/2)));
+                EntityManager.drawEntities(graphics, map.getLocation());
                 graphics.setColor(FONT_COLOR);
-                drawText(ChatManager.getRecentChat(), graphics, 100,size.height-300, -1, 0);
+                drawText(ChatManager.getRecentChat(), graphics, 100, size.height-300, -1, 0);
+                graphics.drawChars(chatTemp.toCharArray(), 0, chatTemp.length(), 100, size.height-350);
                 break;
             default:
                 break;
@@ -144,8 +153,9 @@ public class GameCanvas extends Canvas implements Runnable{
                             case 0:
                                 gameState = GameState.SERVER_SELECT;
                                 //START TESTING CODE
-                                EntityManager.getInstance().addEntity(
-                                        new Player(new Point(2000,2000), 0, ResourceManager.getInstance().getImage("SHIP"), 5, 5, 3, ResourceManager.getInstance().getImage("BULLET"), true));
+                                //TODO: Move player entity creation serverside
+                                //playerId = EntityManager.addEntity(
+                                //        new Player(new Point(2000,2000), 0, ResourceManager.getInstance().getImage("SHIP"), 5, 5, 3, ResourceManager.getInstance().getImage("BULLET"), true));
                                 //END TESTING CODE
                                 break;
                             case 1:
@@ -199,34 +209,41 @@ public class GameCanvas extends Canvas implements Runnable{
                     }
                     break;
                 case SERVER_SELECT:
-                    //START TESTING CODE
-                    try{
-                        network = new NetworkManager(InetAddress.getLocalHost(), 21220);
-                    }catch(Exception ex){
-                        System.out.println("Could not connect to localhost server.");
-                        System.exit(-1);
+                    if(network != null && !loginSent){
+                        network.addPacket(PacketBuilder.clientLogin(SettingsManager.getSetting("username"), " "));
+                        loginSent = true;
                     }
-                    gameState = GameState.GAME;
-                    //END TESTING CODE
                     break;
                 case GAME:
                     //TODO: Game
                     if(System.currentTimeMillis() >= playerUpdateLast + 25){
-                        if(keysDown[2] && !keysDown[3]) EntityManager.getInstance().rotateUser(false);
-                        else if(keysDown[3] && !keysDown[2]) EntityManager.getInstance().rotateUser(true);
+                        if(keysDown[2] && !keysDown[3]) {
+                            EntityManager.rotateEntity(false,playerId);
+                            network.addPacket(PacketBuilder.playerRotate(false));
+                        }else if(keysDown[3] && !keysDown[2]) {
+                            EntityManager.rotateEntity(true,playerId);
+                            network.addPacket(PacketBuilder.playerRotate(true));
+                        }
                         
-                        if(keysDown[0] && !keysDown[1]) EntityManager.getInstance().moveUser(true);
-                        else if(keysDown[1] && !keysDown[0]) EntityManager.getInstance().moveUser(false);
+                        if(keysDown[0] && !keysDown[1]) {
+                            EntityManager.moveEntity(true,playerId);
+                            network.addPacket(PacketBuilder.playerMove(false));
+                        }
+                        else if(keysDown[1] && !keysDown[0]) {
+                            EntityManager.moveEntity(false,playerId);
+                            network.addPacket(PacketBuilder.playerMove(false));
+                        }
                         
                         if(keysDown[4]){
-                            EntityManager.getInstance().getUser().shoot();
+                            ((Player)EntityManager.getEntityById(playerId)).shoot();
                             keysDown[4] = false;
                         }
                         
                         playerUpdateLast = System.currentTimeMillis();
                     }
                     //TODO: REDUNDANT - MARK REMOVAL V
-                    EntityManager.getInstance().updateEntities();
+                    EntityManager.updateEntities();
+                    //END BLOCK
                     break;
                 default:
                     break;
@@ -250,83 +267,17 @@ public class GameCanvas extends Canvas implements Runnable{
         }
     }
     
-    public void stopGame(){
-        doStop = true;
+    protected String getInput(KeyEvent e, String buffer){
+        if(e.getKeyCode() == KeyEvent.VK_BACK_SPACE){
+            buffer = buffer.substring(0, (buffer.length()-1) > 0 ? (buffer.length()-1) : 0);
+        }else if(e.getKeyCode() != KeyEvent.VK_SHIFT){
+            buffer += e.getKeyChar(); 
+        }
+        return buffer;
     }
     
-    private class KeyHandler implements KeyListener{
-        public void keyPressed(KeyEvent e) {
-            if(e.getKeyCode() == KeyEvent.VK_ESCAPE){
-                if(gameState == GameState.GAME){
-                    gameState = GameState.PAUSE;
-                }else if(gameState == GameState.PAUSE){
-                    gameState = GameState.GAME;
-                }
-            }
-            if(gameState == GameState.MAIN_MENU || gameState == GameState.ABOUT || gameState == GameState.OPTIONS || gameState == GameState.PAUSE){
-                switch(e.getKeyCode()){
-                    case KeyEvent.VK_UP:
-                        menuSelection -= 1;
-                        if(menuSelection < 0) menuSelection = (gameState == GameState.MAIN_MENU?menuItems:aboutItems).length-1;
-                        break;
-                    case KeyEvent.VK_DOWN:
-                        menuSelection += 1;
-                        if(menuSelection >= (gameState == GameState.MAIN_MENU?menuItems:aboutItems).length) menuSelection = 0;
-                        break;
-                    case KeyEvent.VK_ENTER:
-                        menuSelected = true;
-                        break;
-                    default:
-                        break;
-                }
-            }
-            if(gameState == GameState.GAME){
-                 switch(e.getKeyCode()){
-                    case KeyEvent.VK_UP:
-                        keysDown[0] = true;
-                        break;
-                    case KeyEvent.VK_DOWN:
-                        keysDown[1] = true;
-                        break;
-                    case KeyEvent.VK_LEFT:
-                        keysDown[2] = true;
-                        break;
-                    case KeyEvent.VK_RIGHT:
-                        keysDown[3] = true;
-                        break;
-                    case KeyEvent.VK_SPACE:
-                        keysDown[4] = true;
-                        break;
-                    case KeyEvent.VK_T:
-                        keysDown[5] = true;
-                        break;
-                }
-            }
-        }
-        
-        public void keyReleased(KeyEvent e) {
-            if(gameState == GameState.GAME){
-                 switch(e.getKeyCode()){
-                    case KeyEvent.VK_UP:
-                        keysDown[0] = false;
-                        break;
-                    case KeyEvent.VK_DOWN:
-                        keysDown[1] = false;
-                        break;
-                    case KeyEvent.VK_LEFT:
-                        keysDown[2] = false;
-                        break;
-                    case KeyEvent.VK_RIGHT:
-                        keysDown[3] = false;
-                        break;
-                    case KeyEvent.VK_SPACE:
-                        keysDown[4] = false;
-                        break;
-                }
-            }
-        }
-        
-        public void keyTyped(KeyEvent e) {}
+    public void stopGame(){
+        doStop = true;
     }
     
     private class Chrono implements ActionListener{

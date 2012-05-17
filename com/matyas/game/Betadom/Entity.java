@@ -2,14 +2,16 @@ package com.matyas.game.Betadom;
 
 import java.awt.Image;
 import java.awt.Point;
+import java.io.Serializable;
+import javax.swing.ImageIcon;
 
-public class Entity {
+public class Entity implements Serializable{
     protected int x = 0;
     protected int y = 0;
     protected int direction = 0;
     protected float speed = 0;
     protected int rotateSpeed = 0;
-    protected Image sprite = null;
+    protected ImageIcon sprite = null;
     
     protected int distanceOffset = 0;
     
@@ -17,7 +19,7 @@ public class Entity {
         this.x = location.x;
         this.y = location.y;
         this.direction = direction;
-        this.sprite = sprite;
+        this.sprite = new ImageIcon(sprite);
         this.speed = speed;
         this.rotateSpeed = rotateSpeed;
         
@@ -54,11 +56,11 @@ public class Entity {
     }
     
     public void setSprite(Image sprite){
-        this.sprite = sprite;
+        this.sprite = new ImageIcon(sprite);
         this.distanceOffset = sprite.getWidth(null)/2;
     }
     public Image getSprite(){
-        return sprite;
+        return sprite.getImage();
     }
     
     public int getDistanceOffset(){
