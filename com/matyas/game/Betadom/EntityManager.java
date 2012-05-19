@@ -2,23 +2,28 @@ package com.matyas.game.Betadom;
 
 import java.awt.Graphics;
 import java.awt.Point;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Set;
 
 public class EntityManager {
-    //TODO: Fix out-of-bounds on secondary connection
-    protected static ArrayList<Entity> entities = new ArrayList<Entity>();
+    protected static HashMap<Integer,Entity> entities = new HashMap<Integer,Entity>();
     
     public static int addEntity(Entity entity){
         return addEntity(entity, -1);
     }
     
     public static int addEntity(Entity entity, int index){
-        if(index != -1){
-            entities.add(index, entity);
-        }else{
-            entities.add(entity);
-            index = entities.indexOf(entity);
+        if(index == -1){
+            Set<Integer> keys = entities.keySet();
+            for(Integer key : keys){
+                if(key > (index + 1)){
+                   break; 
+                }
+                index = key;
+            }
+            index += 1;
         }
+        entities.put(index, entity);
         return index;
     }
     
@@ -30,13 +35,13 @@ public class EntityManager {
     }
     
     public static void drawEntities(Graphics g, Point offset){
-        for(Entity entity : entities){
+        for(Entity entity : entities.values()){
             entity.draw(g, offset);
         }
     }
     
     public static void updateEntities(){
-        for(Entity entity : entities){
+        for(Entity entity : entities.values()){
             entity.update();
         }
     }

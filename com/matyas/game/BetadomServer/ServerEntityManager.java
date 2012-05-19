@@ -5,8 +5,9 @@ import com.matyas.game.Betadom.util.PacketBuilder;
 
 public class ServerEntityManager extends EntityManager{
     public static void sendLocations(){
-        for(Entity entity : entities){
-            ServerMain.sendToAll(PacketBuilder.entityMove(entities.indexOf(entity), entity.getLocation().x, entity.getLocation().y, entity.getDirection()));
+        for(Integer id : entities.keySet()){
+            ServerMain.sendToAll(PacketBuilder.entityMove(id, entities.get(id).getLocation().x,
+                    entities.get(id).getLocation().y, entities.get(id).getDirection()));
         }
     }
 }
