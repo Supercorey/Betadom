@@ -51,6 +51,11 @@ public class PacketBuilder {
         params.add(entity);
         return new Packet((byte)0x07, params);
     }
+    public static Packet removeEntity(int uid){
+        ArrayList params = new ArrayList();
+        params.add(uid);
+        return new Packet((byte)0x08, params);
+    }
     public static Packet disconnect(String reason){
         ArrayList params = new ArrayList();
         params.add(reason);

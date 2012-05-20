@@ -105,8 +105,8 @@ public class GameCanvas extends Canvas implements Runnable{
                 break;
             case GAME:
                 map.drawMap(graphics, 
-                        (short)((EntityManager.getEntityById(playerId).getLocation().x)-(size.width/2)),
-                        (short)((EntityManager.getEntityById(playerId).getLocation().y)-(size.height/2)));
+                        (short)((EntityManager.getEntity(playerId).getLocation().x)-(size.width/2)),
+                        (short)((EntityManager.getEntity(playerId).getLocation().y)-(size.height/2)));
                 EntityManager.drawEntities(graphics, map.getLocation());
                 graphics.setColor(FONT_COLOR);
                 drawText(ChatManager.getRecentChat(), graphics, 100, size.height-300, -1, 0);
@@ -222,7 +222,7 @@ public class GameCanvas extends Canvas implements Runnable{
                         
                         if(keysDown[0] && !keysDown[1]) {
                             EntityManager.moveEntity(true,playerId);
-                            network.addPacket(PacketBuilder.playerMove(false));
+                            network.addPacket(PacketBuilder.playerMove(true));
                         }
                         else if(keysDown[1] && !keysDown[0]) {
                             EntityManager.moveEntity(false,playerId);
@@ -230,7 +230,7 @@ public class GameCanvas extends Canvas implements Runnable{
                         }
                         
                         if(keysDown[4]){
-                            ((Player)EntityManager.getEntityById(playerId)).shoot();
+                            ((Player)EntityManager.getEntity(playerId)).shoot();
                             keysDown[4] = false;
                         }
                         

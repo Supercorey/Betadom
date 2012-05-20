@@ -7,7 +7,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.LinkedList;
+import java.util.Map.Entry;
 import java.util.Random;
+import java.util.Set;
 
 public class ClientHandler extends Thread{
     private boolean running = true;
@@ -88,6 +90,7 @@ public class ClientHandler extends Thread{
         disconnect("",true);
     }
     public void disconnect(String reason, boolean notifyClient){
+        ServerMain.sendToAll(PacketBuilder.removeEntity(uid));
         running = false;
         BetadomLogger.log(clientSocket.getInetAddress()+" disconnected: "+reason);
         if(notifyClient){
@@ -116,12 +119,20 @@ public class ClientHandler extends Thread{
                     String password = (String)input.readObject();
                     addPacket(PacketBuilder.loginReply(pingInterval));
                     ServerMain.sendToAll(PacketBuilder.addEntity(uid, client));
+                    Set<Entry<Integer,Entity>> allEntities = ServerEntityManager.getAllEntities().entrySet();
+                    for(Entry<Integer,Entity> entitySet : allEntities){
+                        if(!entitySet.getValue().equals(client)){
+                            addPacket(PacketBuilder.addEntity(entitySet.getKey(), entitySet.getValue()));
+                        }
+                    }
                     break;
                 case 0x03:
                     ServerEntityManager.moveEntity(((Boolean)input.readObject()).booleanValue(), uid);
+                    ServerEntityManager.sendLocations();
                     break;
                 case 0x04:
                     ServerEntityManager.rotateEntity(((Boolean)input.readObject()).booleanValue(), uid);
+                    ServerEntityManager.sendLocations();
                     break;
                 case 0x06:
                     String chat = (String)input.readObject();

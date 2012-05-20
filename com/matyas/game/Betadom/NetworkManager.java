@@ -96,7 +96,7 @@ public class NetworkManager extends Thread{
                     int x = (Integer)input.readObject();
                     int y = (Integer)input.readObject();
                     int rotation = (Integer)input.readObject(); 
-                    Entity entity1 = EntityManager.getEntityById(uid1);
+                    Entity entity1 = EntityManager.getEntity(uid1);
                     entity1.setLocation(new Point(x,y));
                     entity1.setDirection(rotation);
                     break;
@@ -106,14 +106,18 @@ public class NetworkManager extends Thread{
                     ChatManager.addChatLine(text);
                     break;
                 case 0x07:
-                    int uid = (Integer)input.readObject();
+                    int uid2 = (Integer)input.readObject();
                     Entity entity = (Entity)input.readObject();
-                    EntityManager.addEntity(entity, uid);
+                    EntityManager.addEntity(entity, uid2);
                     if(playerId == -1){
-                        playerId = uid;
-                        game.playerId = uid;
+                        playerId = uid2;
+                        game.playerId = uid2;
                         game.gameState = GameState.GAME;
                     }
+                    break;
+                case 0x08:
+                    int uid = (Integer)input.readObject();
+                    EntityManager.removeEntity(uid);
                     break;
                 case (byte)0xFF:
                     String reason = (String)input.readObject();
@@ -126,7 +130,6 @@ public class NetworkManager extends Thread{
         }
     }
     
-    //TODO: Finish client ping timeout code
     private int serverPingInterval = 10000;
     private int playerId = -1;
     

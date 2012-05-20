@@ -27,9 +27,6 @@ public class EntityManager {
         return index;
     }
     
-    public static void removeEntity(Entity entity){
-        entities.remove(entity);
-    }
     public static void removeEntity(int index){
         entities.remove(index);
     }
@@ -46,15 +43,18 @@ public class EntityManager {
         }
     }
     
-    public static Entity getEntityById(int uid){
+    public static Entity getEntity(int uid){
         return entities.get(uid);
+    }
+    public static HashMap<Integer,Entity> getAllEntities(){
+        return entities;
     }
     
     public static void rotateEntity(boolean clockwise, int uid){
-        getEntityById(uid).rotate(getEntityById(uid).getRotateSpeed()*(clockwise?1:-1));
+        getEntity(uid).rotate(getEntity(uid).getRotateSpeed()*(clockwise?1:-1));
     }
     
     public static void moveEntity(boolean forward, int uid){
-        entities.get(uid).move(getEntityById(uid).getSpeed()*(forward?1:-1));
+        entities.get(uid).move(getEntity(uid).getSpeed()*(forward?1:-1));
     }
 }
