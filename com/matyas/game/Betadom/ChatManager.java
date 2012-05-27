@@ -32,6 +32,16 @@ public class ChatManager {
         return ret;
     }
     
+    public static int getRecentLineNumber(){
+        int ret = 0;
+        for(int t = chatBuffer.size()-5; t < chatBuffer.size(); ++t){
+            if(chatBuffer.get(t).getTimestamp() + chatTime > (System.currentTimeMillis()/1000)){
+                ret++;
+            }
+        }
+        return ret;
+    }
+    
     private static class ChatLine{
         private String chat = "";
         private int timestamp = 0;

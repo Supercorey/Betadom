@@ -90,7 +90,7 @@ public class ClientHandler extends Thread{
         disconnect("",true);
     }
     public void disconnect(String reason, boolean notifyClient){
-        ServerMain.sendToAll(PacketBuilder.removeEntity(uid));
+        ServerEntityManager.removeEntity(uid);
         running = false;
         BetadomLogger.log(clientSocket.getInetAddress()+" disconnected: "+reason);
         if(notifyClient){
@@ -128,11 +128,11 @@ public class ClientHandler extends Thread{
                     break;
                 case 0x03:
                     ServerEntityManager.moveEntity(((Boolean)input.readObject()).booleanValue(), uid);
-                    ServerEntityManager.sendLocations();
+                    //ServerEntityManager.sendLocations();
                     break;
                 case 0x04:
                     ServerEntityManager.rotateEntity(((Boolean)input.readObject()).booleanValue(), uid);
-                    ServerEntityManager.sendLocations();
+                    //ServerEntityManager.sendLocations();
                     break;
                 case 0x06:
                     String chat = (String)input.readObject();

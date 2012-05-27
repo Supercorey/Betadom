@@ -14,6 +14,7 @@ public class GameCanvas extends Canvas implements Runnable{
     private Timer timer = null;
     private final Color BG_COLOR = Color.BLACK;
     private final Color FONT_COLOR = Color.WHITE;
+    private final Color LIGHT_WHITE_COLOR = new Color(255, 255, 255, 128);
     private final Font MAIN_FONT = new Font("Monospaced", Font.PLAIN, 14);
     protected final int SERVER_PORT = 21220;
     private boolean computationDone = false;
@@ -108,9 +109,15 @@ public class GameCanvas extends Canvas implements Runnable{
                         (short)((EntityManager.getEntity(playerId).getLocation().x)-(size.width/2)),
                         (short)((EntityManager.getEntity(playerId).getLocation().y)-(size.height/2)));
                 EntityManager.drawEntities(graphics, map.getLocation());
-                graphics.setColor(FONT_COLOR);
+                graphics.setColor(LIGHT_WHITE_COLOR);
+                graphics.fillRect(100, size.height-230-(ChatManager.getRecentLineNumber()*20), 500, ChatManager.getRecentLineNumber()*20);
+                graphics.setColor(Color.BLACK);
                 drawText(ChatManager.getRecentChat(), graphics, 100, size.height-300, -1, 0);
-                graphics.drawChars(chatTemp.toCharArray(), 0, chatTemp.length(), 100, size.height-350);
+                if(keysDown[5]){
+                    graphics.setColor(FONT_COLOR);
+                    graphics.drawLine(100, size.height-340, 600, size.height-340);
+                    graphics.drawChars(chatTemp.toCharArray(), 0, chatTemp.length(), 100, size.height-350);
+                }
                 break;
             default:
                 break;
